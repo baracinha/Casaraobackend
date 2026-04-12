@@ -19,6 +19,8 @@ namespace hotel.Controllers
             return "Eu adoro estas coisas";
         }
 
+
+
         [HttpGet("Getimposter")]
         public async Task<IActionResult> GetImposter()
         {
