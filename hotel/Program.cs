@@ -1,9 +1,13 @@
 using Microsoft.Extensions.Options;
+using hotel.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
