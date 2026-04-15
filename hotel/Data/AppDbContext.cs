@@ -9,6 +9,6 @@ namespace hotel.Data
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
-        public DbSet<utilizador> utilizador { get; set; }
+        public DbSet<utilizadores> utilizadores{ get; set; }
     }
 }
