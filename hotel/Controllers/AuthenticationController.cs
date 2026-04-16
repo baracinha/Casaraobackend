@@ -6,6 +6,7 @@ using hotel.DTOs;
 using hotel.Models;
 using BCrypt.Net;
 using System;
+using Microsoft.AspNetCore.Identity;
 
 namespace hotel.Controllers
 {
@@ -15,9 +16,12 @@ namespace hotel.Controllers
     {
         private readonly AppDbContext _context;
 
-        public AuthenticationController(AppDbContext context)
+        private readonly TokenProvider _tokenProvider;
+
+        public AuthenticationController(AppDbContext context, TokenProvider tokenProvider)
         {
             _context = context;
+            _tokenProvider = tokenProvider;
         }
 
         [HttpPost("register")]
@@ -55,17 +59,15 @@ namespace hotel.Controllers
             {
                 return Unauthorized("Invalid email or password.");
             }
-            return Ok(new
+            else
             {
-                message = "Login successful",
-                id = user.id,
-                nome = user.nome,
-                email = user.email,
-                cargo = user.cargo,
-                bio = user.bio,
-                imagem_perfil = user.imagem_perfil,
-                cidade = user.cidade,
-            });
+                var token = _tokenProvider.GenerateToken(user);
+                return Ok(new
+                {
+                    message = $"Login successful, welcome {user.nome}",
+                    token = token
+                });
+            }
         }
     }
 }
