@@ -2,12 +2,16 @@ using Microsoft.Extensions.Options;
 using hotel.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using hotel.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-
+builder.Services.AddScoped<TokenProvider>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(

@@ -7,9 +7,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using hotel.Models;
 
 
-namespace hotel
+namespace hotel.Jwt
 {
     public class TokenProvider
     {
@@ -20,15 +21,19 @@ namespace hotel
             _configuration = configuration;
         }
 
-        public string GenerateToken(string nome, int id, string email, string cargo)
+        public string GenerateToken(utilizadores user)
         {
             var claims = new[]
             {
 
-                new Claim(ClaimTypes.NameIdentifier, id.ToString()),
-                new Claim(ClaimTypes.Name, nome),
-                new Claim(ClaimTypes.Email, email),
-                new Claim(ClaimTypes.Role, cargo),
+                new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
+                new Claim(ClaimTypes.Name, user.nome),
+                new Claim(ClaimTypes.Email, user.email),
+                new Claim(ClaimTypes.MobilePhone, user.telefone),
+                new Claim(ClaimTypes.UserData, user.bio),
+                new Claim(ClaimTypes.Uri, user.imagem_perfil),
+                new Claim(ClaimTypes.Locality, user.cidade),
+                new Claim(ClaimTypes.Role, user.cargo),
             };
             var secretKey = _configuration["Jwt:SecretKey"];
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));

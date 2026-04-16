@@ -7,6 +7,7 @@ using hotel.Models;
 using BCrypt.Net;
 using System;
 using Microsoft.AspNetCore.Identity;
+using hotel.Jwt;
 
 namespace hotel.Controllers
 {
@@ -64,8 +65,11 @@ namespace hotel.Controllers
                 var token = _tokenProvider.GenerateToken(user);
                 return Ok(new
                 {
-                    message = $"Login successful, welcome {user.nome}",
-                    token = token
+                    token = token,
+                    id = user.id,
+                    nome = user.nome,
+                    email = user.email,
+                    telefone = user.telefone
                 });
             }
         }
