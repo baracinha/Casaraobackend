@@ -13,6 +13,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<TokenProvider>();
 
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "localhost:6379"; // Porta padrão do Redis
+    options.InstanceName = "HotelProject_";
+});
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("Conn"),

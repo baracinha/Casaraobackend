@@ -28,9 +28,9 @@ namespace hotel.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDTO userDTO)
         {
-            if (await _context.utilizadores.AnyAsync(u => u.email == userDTO.email))
+            if (await _context.utilizadores.AnyAsync(u => u.nome == userDTO.nome))
             {
-                return BadRequest("Email already exists.");
+                return BadRequest("name already exists.");
             }
                 var user = new utilizadores
                 {

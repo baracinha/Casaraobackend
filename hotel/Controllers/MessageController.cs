@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography.X509Certificates;
 using hotel.DTOs;
 using hotel.Models;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 
 namespace hotel.Controllers
 {
@@ -13,16 +15,33 @@ namespace hotel.Controllers
     public class MessageController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IDistributedCache _cache;
 
-        public MessageController(AppDbContext context)
+        public MessageController(AppDbContext context, IDistributedCache cache)
         {
             _context = context;
+            _cache = cache;
         }
 
         [HttpGet("ListUsers")]
         public async Task<IActionResult> ListUsers([FromQuery] ListContactsDTO listContactsDTO)
         {
+           /* string cacheKey = "ListUsers_" + listContactsDTO.id;
+
+            var cachedData = await _cache.GetStringAsync(cacheKey);
+
+            if (cachedData != null)
+            {
+                Console.WriteLine("Data retrieved from cache.");
+                return Ok(JsonConvert.DeserializeObject<List<ListContactsDTO>>(cachedData));
+            }
+            Console.WriteLine("Data retrieved from database.");*/
             var user = await _context.utilizadores.Where(u => u.id != listContactsDTO.id).ToListAsync();
+/*
+            await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(user), new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+            });*/
 
             return Ok(user);
         }
@@ -46,6 +65,16 @@ namespace hotel.Controllers
             _context.mensagens.Add(message);
             await _context.SaveChangesAsync();
             return Ok(new { message = "Message sent successfully", id = message.id });
+        }
+
+        [HttpGet("ListMessages")]
+        public async Task<IActionResult> ListMessages([FromQuery] ListMessagesDTO listMessagesDTO)
+        {
+            var messages = await _context.mensagens
+                .Where(m => (m.id_enviado_por == listMessagesDTO.id_enviado_por && m.id_recebido_por == listMessagesDTO.id_recebido_por) ||
+                            (m.id_enviado_por == listMessagesDTO.id_recebido_por && m.id_recebido_por == listMessagesDTO.id_enviado_por))
+                .ToListAsync();
+            return Ok(messages);
         }
     }
 }
