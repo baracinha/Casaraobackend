@@ -10,5 +10,6 @@ namespace hotel.Data
         {
         }
         public DbSet<utilizadores> utilizadores{ get; set; }
+        public DbSet<mensagens> mensagens { get; set; }
     }
 }

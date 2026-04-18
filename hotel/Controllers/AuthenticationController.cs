@@ -32,24 +32,24 @@ namespace hotel.Controllers
             {
                 return BadRequest("Email already exists.");
             }
-            var user = new utilizadores
-            {
-                nome = userDTO.nome,
-                email = userDTO.email,
-                telefone = userDTO.telefone,
-                password_hash = BCrypt.Net.BCrypt.HashPassword(userDTO.password_hash),
-                cargo = userDTO.cargo,
-                bio = userDTO.bio,
-                imagem_perfil = userDTO.imagem_perfil,
-                cidade = userDTO.cidade,
-            };
-            _context.utilizadores.Add(user);
-            await _context.SaveChangesAsync();
-            return Ok(new
-            {
-                message = "User registered successfully",
-                id = user.id,
-            });
+                var user = new utilizadores
+                {
+                    nome = userDTO.nome,
+                    email = userDTO.email,
+                    telefone = userDTO.telefone,
+                    password_hash = BCrypt.Net.BCrypt.HashPassword(userDTO.password_hash),
+                    cargo = userDTO.cargo,
+                    bio = userDTO.bio,
+                    imagem_perfil = userDTO.imagem_perfil,
+                    cidade = userDTO.cidade,
+                };
+                _context.utilizadores.Add(user);
+                await _context.SaveChangesAsync();
+                return Ok(new
+                {
+                    message = "User registered successfully",
+                    id = user.id,
+                });
         }
 
         [HttpPost("login")]
