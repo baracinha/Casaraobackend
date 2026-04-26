@@ -26,23 +26,28 @@ namespace hotel.Controllers
         [HttpGet("ListUsers")]
         public async Task<IActionResult> ListUsers([FromQuery] ListContactsDTO listContactsDTO)
         {
-           /* string cacheKey = "ListUsers_" + listContactsDTO.id;
-
+            string cacheKey = $"ListUsers_{listContactsDTO.id}";
             var cachedData = await _cache.GetStringAsync(cacheKey);
 
-            if (cachedData != null)
+            if (!string.IsNullOrEmpty(cachedData))
             {
-                Console.WriteLine("Data retrieved from cache.");
+                Console.WriteLine("Data retrieved from cache. "+ cachedData);
                 return Ok(JsonConvert.DeserializeObject<List<ListContactsDTO>>(cachedData));
             }
-            Console.WriteLine("Data retrieved from database.");*/
-            var user = await _context.utilizadores.Where(u => u.id != listContactsDTO.id).ToListAsync();
-/*
-            await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(user), new DistributedCacheEntryOptions
+            Console.WriteLine("Data retrieved from database.");
+            var user = await _context.utilizadores.Where(u => u.id != listContactsDTO.id).Select(u => new ListContactsDTO
             {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-            });*/
+                id = u.id,
+                nome = u.nome
+            }).ToListAsync();
 
+            if (user.Any())
+            {
+                await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(user), new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+                });
+            }
             return Ok(user);
         }
 
