@@ -7,6 +7,7 @@ using hotel.DTOs;
 using hotel.Models;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using hotel.Services;
 
 namespace hotel.Controllers
 {
@@ -16,46 +17,34 @@ namespace hotel.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IDistributedCache _cache;
+        private readonly ChatServices _chatServices;
 
-        public MessageController(AppDbContext context, IDistributedCache cache)
+        public MessageController(AppDbContext context, IDistributedCache cache, ChatServices chatServices)
         {
             _context = context;
             _cache = cache;
+            _chatServices = chatServices;
         }
 
         [HttpGet("ListUsers")]
         public async Task<IActionResult> ListUsers([FromQuery] ListContactsDTO listContactsDTO)
         {
-            string cacheKey = $"ListUsers_{listContactsDTO.id}";
-            var cachedData = await _cache.GetStringAsync(cacheKey);
-
-            if (!string.IsNullOrEmpty(cachedData))
-            {
-                Console.WriteLine("Data retrieved from cache. "+ cachedData);
-                return Ok(JsonConvert.DeserializeObject<List<ListContactsDTO>>(cachedData));
-            }
-            Console.WriteLine("Data retrieved from database.");
-            var user = await _context.utilizadores.Where(u => u.id != listContactsDTO.id).Select(u => new ListContactsDTO
-            {
-                id = u.id,
-                nome = u.nome
-            }).ToListAsync();
-
-            if (user.Any())
-            {
-                await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(user), new DistributedCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-                });
-            }
+            var user = await _chatServices.GetContacts(listContactsDTO);
             return Ok(user);
         }
 
         [HttpGet("BasicList")]
         public async Task<IActionResult> BasicList([FromQuery] BasicListDTO basicListDTO)
         {
-            var user = await _context.utilizadores.FirstOrDefaultAsync(u => u.nome == basicListDTO.nome);
-            return Ok(user);
+            var user = await _chatServices.GetBasicList(basicListDTO);
+            if (user != null)
+            {
+                return Ok(user);
+            }
+            else
+            {
+                return NotFound("User not found.");
+            }
         }
 
         [HttpPost("InsertMessages")]
@@ -75,10 +64,7 @@ namespace hotel.Controllers
         [HttpGet("ListMessages")]
         public async Task<IActionResult> ListMessages([FromQuery] ListMessagesDTO listMessagesDTO)
         {
-            var messages = await _context.mensagens
-                .Where(m => (m.id_enviado_por == listMessagesDTO.id_enviado_por && m.id_recebido_por == listMessagesDTO.id_recebido_por) ||
-                            (m.id_enviado_por == listMessagesDTO.id_recebido_por && m.id_recebido_por == listMessagesDTO.id_enviado_por))
-                .ToListAsync();
+            var messages = await _chatServices.GetMessages(listMessagesDTO);
             return Ok(messages);
         }
     }
