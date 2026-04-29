@@ -50,15 +50,8 @@ namespace hotel.Controllers
         [HttpPost("InsertMessages")]
         public async Task<IActionResult> InsertMessages([FromBody] InsertMessagesDTO insertMessagesDTO)
         {
-            var message = new mensagens
-            {
-                id_enviado_por = insertMessagesDTO.id_enviado_por,
-                texto_mensagem = insertMessagesDTO.texto_mensagem,
-                id_recebido_por = insertMessagesDTO.id_recebido_por
-            };
-            _context.mensagens.Add(message);
-            await _context.SaveChangesAsync();
-            return Ok(new { message = "Message sent successfully", id = message.id });
+            await _chatServices.SendMessage(insertMessagesDTO);
+            return Ok(new { message = "Message sent successfully" });
         }
 
         [HttpGet("ListMessages")]

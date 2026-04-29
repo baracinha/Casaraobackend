@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using Google.Protobuf.WellKnownTypes;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace hotel.Models
 {
@@ -14,5 +15,6 @@ namespace hotel.Models
         public string bio { get; set; }
         public string imagem_perfil { get; set; }
         public string cidade { get; set; }
+        public DateTime created_at { get; set; } = DateTime.Now;
     }
 }

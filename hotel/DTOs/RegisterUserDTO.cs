@@ -6,6 +6,7 @@ namespace hotel.DTOs
 {
     public class RegisterUserDTO
     {
+        public int id { get; set; }
         public string nome { get; set; }
         public string email { get; set; }
         public string telefone { get; set; }

@@ -1,9 +1,10 @@
 ﻿using hotel.Data;
 using hotel.DTOs;
+using hotel.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
-using Microsoft.EntityFrameworkCore;
 
 namespace hotel.Services
 {
@@ -79,14 +80,43 @@ namespace hotel.Services
                     id_recebido_por = m.id_recebido_por
                 })
                 .ToListAsync();
-                if (messages.Any())
+            if (messages.Any())
+            {
+                await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(messages), new DistributedCacheEntryOptions
                 {
-                    await _cache.SetStringAsync(cacheKey, JsonConvert.SerializeObject(messages), new DistributedCacheEntryOptions
-                    {
-                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-                    });
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+                });
             }
             return messages;
+        }
+
+        public async Task SendMessage(InsertMessagesDTO insertMessagesDTO)
+        {
+
+            var message = new mensagens
+            {
+                id_enviado_por = insertMessagesDTO.id_enviado_por,
+                texto_mensagem = insertMessagesDTO.texto_mensagem,
+                id_recebido_por = insertMessagesDTO.id_recebido_por
+            };
+            _context.mensagens.Add(message);
+            await _context.SaveChangesAsync();
+            await ClearCache($"ListMessages_{insertMessagesDTO.id_enviado_por}_{insertMessagesDTO.id_recebido_por}");
+        }
+
+        public async Task ClearCache(string cacheKey)
+        {
+            await _cache.RemoveAsync(cacheKey);
+        }
+        public async Task ClearAllCache()
+        {
+            // This method assumes you have a way to track all cache keys used in your application.
+            // You might want to implement a mechanism to store and retrieve all cache keys.
+            var cacheKeys = new List<string> { /* List of all cache keys */ };
+            foreach (var key in cacheKeys)
+            {
+                await _cache.RemoveAsync(key);
+            }
         }
     }
 }

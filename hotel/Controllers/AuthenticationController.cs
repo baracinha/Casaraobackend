@@ -8,6 +8,8 @@ using BCrypt.Net;
 using System;
 using Microsoft.AspNetCore.Identity;
 using hotel.Jwt;
+using Microsoft.AspNetCore.Authentication;
+using hotel.Services;
 
 namespace hotel.Controllers
 {
@@ -15,62 +17,44 @@ namespace hotel.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
+        private readonly AutenthicationServices _authenticationServices;
+
         private readonly AppDbContext _context;
 
         private readonly TokenProvider _tokenProvider;
 
-        public AuthenticationController(AppDbContext context, TokenProvider tokenProvider)
+        public AuthenticationController(AppDbContext context, TokenProvider tokenProvider, AutenthicationServices authenticationServices)
         {
             _context = context;
             _tokenProvider = tokenProvider;
+            _authenticationServices = authenticationServices;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDTO userDTO)
         {
-            if (await _context.utilizadores.AnyAsync(u => u.nome == userDTO.nome))
+            var user = await _authenticationServices.RegisterUser(userDTO);
+            if (user != null)
             {
-                return BadRequest("name already exists.");
+                return Ok(user);
             }
-                var user = new utilizadores
-                {
-                    nome = userDTO.nome,
-                    email = userDTO.email,
-                    telefone = userDTO.telefone,
-                    password_hash = BCrypt.Net.BCrypt.HashPassword(userDTO.password_hash),
-                    cargo = userDTO.cargo,
-                    bio = userDTO.bio,
-                    imagem_perfil = userDTO.imagem_perfil,
-                    cidade = userDTO.cidade,
-                };
-                _context.utilizadores.Add(user);
-                await _context.SaveChangesAsync();
-                return Ok(new
-                {
-                    message = "User registered successfully",
-                    id = user.id,
-                });
+            else
+            {
+                return BadRequest("Username or email already exists.");
+            }
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> LoginUser([FromBody] LoginUserDTO loginDTO)
         {
-            var user = await _context.utilizadores.FirstOrDefaultAsync(u => u.nome == loginDTO.username);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(loginDTO.password_hash, user.password_hash))
+            var user = await _authenticationServices.LoginUser(loginDTO);
+            if (user != null)
             {
-                return Unauthorized("Invalid email or password.");
+                return Ok(user);
             }
             else
             {
-                var token = _tokenProvider.GenerateToken(user);
-                return Ok(new
-                {
-                    token = token,
-                    id = user.id,
-                    nome = user.nome,
-                    email = user.email,
-                    telefone = user.telefone
-                });
+                return Unauthorized("Invalid username or password.");
             }
         }
     }

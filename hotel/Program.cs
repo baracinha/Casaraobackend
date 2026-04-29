@@ -7,10 +7,12 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using hotel.Jwt;
 using hotel.Services;
+using hotel.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<AutenthicationServices>();
 
 builder.Services.AddScoped<ChatServices>();
 
