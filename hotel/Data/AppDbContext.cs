@@ -11,5 +11,6 @@ namespace hotel.Data
         }
         public DbSet<utilizadores> utilizadores{ get; set; }
         public DbSet<mensagens> mensagens { get; set; }
+        public DbSet<propriedades> propriedades { get; set; }
     }
 }

@@ -18,6 +18,8 @@ builder.Services.AddScoped<ChatServices>();
 
 builder.Services.AddScoped<TokenProvider>();
 
+builder.Services.AddScoped<SalesServices>();
+
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = "localhost:6379"; // Porta padrão do Redis
