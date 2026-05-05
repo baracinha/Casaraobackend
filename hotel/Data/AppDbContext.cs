@@ -12,5 +12,15 @@ namespace hotel.Data
         public DbSet<utilizadores> utilizadores{ get; set; }
         public DbSet<mensagens> mensagens { get; set; }
         public DbSet<propriedades> propriedades { get; set; }
+        public DbSet<imagens_propriedades> imagens_propriedades { get; set; }
+        public DbSet<caracteristicas> caracteristicas { get; set; }
+        public DbSet<propriedades_caracteristicas> propriedades_caracteristicas { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<imagens_propriedades>()
+                .HasOne(i => i.propriedade)
+                .WithMany(p => p.imagens)
+                .HasForeignKey(i => i.id_propriedade);
+        }
     }
 }

@@ -20,6 +20,8 @@ namespace hotel.Models
         public int casa_banho { get; set; }
         public decimal area_m2 { get; set; }
         public DateTime created_at { get; set; } = DateTime.Now;
+        public string tipo_negocio { get; set; }
+        public List<imagens_propriedades> imagens { get; set; } = new();
 
     }
 }
