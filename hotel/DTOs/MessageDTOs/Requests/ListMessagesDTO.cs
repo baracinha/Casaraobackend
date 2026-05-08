@@ -1,6 +1,4 @@
-﻿
-
-namespace hotel.DTOs
+﻿namespace hotel.DTOs.MessageDTOs.Requests
 {
     public class ListMessagesDTO
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace hotel.DTOs
+namespace hotel.DTOs.AuthDTOs.Requests
 {
     public class RegisterUserDTO
     {
@@ -15,5 +15,6 @@ namespace hotel.DTOs
         public string bio { get; set; } 
         public string imagem_perfil { get; set; }
         public string cidade { get; set; }
+        public string message { get; set; } = string.Empty;
     }
 }

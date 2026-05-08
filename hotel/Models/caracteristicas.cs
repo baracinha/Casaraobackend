@@ -8,5 +8,6 @@ namespace hotel.Models
     {
         public int id { get; set; }
         public string nome { get; set; }
+        public List<propriedades_caracteristicas> propriedades_caracteristicas { get; set; } = new();
     }
 }

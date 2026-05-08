@@ -21,6 +21,15 @@ namespace hotel.Data
                 .HasOne(i => i.propriedade)
                 .WithMany(p => p.imagens)
                 .HasForeignKey(i => i.id_propriedade);
+            modelBuilder.Entity<propriedades_caracteristicas>()
+                .HasOne(pc => pc.propriedade)
+                .WithMany(p => p.caracteristicas)
+                .HasForeignKey(pc => pc.id_propriedade);
+
+            modelBuilder.Entity<propriedades_caracteristicas>()
+                .HasOne(pc => pc.caracteristica)
+                .WithMany(c => c.propriedades_caracteristicas)
+                .HasForeignKey(pc => pc.id_caracteristica);
         }
     }
 }

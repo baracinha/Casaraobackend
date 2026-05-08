@@ -1,5 +1,5 @@
 ﻿using hotel.Data;
-using hotel.DTOs;
+using hotel.DTOs.MessageDTOs.Requests;
 using hotel.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

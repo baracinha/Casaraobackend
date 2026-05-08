@@ -9,5 +9,7 @@ namespace hotel.Models
         public int id { get; set; }
         public int id_propriedade { get; set; }
         public int id_caracteristica { get; set; }
+        public propriedades propriedade { get; set; }
+        public caracteristicas caracteristica { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace hotel.DTOs
+namespace hotel.DTOs.AuthDTOs.Requests
 {
     public class LoginUserDTO
     {
@@ -12,6 +12,7 @@ namespace hotel.DTOs
         public string? email { get; set; }
         public string? telefone { get; set; }
         public string password_hash { get; set; }
+        public string message { get; set; } = string.Empty;
         public DateTime tempo_inscrito { get; set; }
     }
 }

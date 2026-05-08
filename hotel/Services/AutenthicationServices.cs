@@ -1,5 +1,4 @@
 ﻿using hotel.Data;
-using hotel.DTOs;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
@@ -9,6 +8,7 @@ using hotel.Controllers;
 using hotel.Jwt;
 using OfficeOpenXml.FormulaParsing.LexicalAnalysis;
 using Nest;
+using hotel.DTOs.AuthDTOs.Requests;
 
 namespace hotel.Services
 {
@@ -30,7 +30,7 @@ namespace hotel.Services
             if (user != null && BCrypt.Net.BCrypt.Verify(loginDTO.password_hash, user.password_hash))
             {
                 var token = _tokenProvider.GenerateToken(user);
-                return new LoginUserDTO 
+                return new LoginUserDTO
                 {
                     token = token,
                     id = user.id,
@@ -40,14 +40,39 @@ namespace hotel.Services
                     tempo_inscrito = user.created_at
                 };
             }
-            return null;
+            else if (user == null)
+            {
+                var userByEmail = await _context.utilizadores.FirstOrDefaultAsync(u => u.email == loginDTO.username);
+                if (userByEmail != null)
+                {
+                    if (BCrypt.Net.BCrypt.Verify(loginDTO.password_hash, userByEmail.password_hash))
+                    {
+                        var token = _tokenProvider.GenerateToken(userByEmail);
+                        return new LoginUserDTO
+                        {
+                            token = token,
+                            id = userByEmail.id,
+                            username = userByEmail.nome,
+                            email = userByEmail.email,
+                            telefone = userByEmail.telefone,
+                            tempo_inscrito = userByEmail.created_at
+                        };
+                    }
+                }
+            }
+                return null;
         }
 
         public async Task<RegisterUserDTO> RegisterUser(RegisterUserDTO registerDTO)
         {
             if (await _context.utilizadores.AnyAsync(u => u.nome == registerDTO.nome || u.email == registerDTO.email))
             {
-                return null;
+                var errorMsg = new RegisterUserDTO
+                {
+                    message = "Username or email already exists."
+                };
+                return errorMsg;
+
             }
             var user = new utilizadores
             {

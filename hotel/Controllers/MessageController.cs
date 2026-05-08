@@ -3,11 +3,11 @@ using hotel.Jwt;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography.X509Certificates;
-using hotel.DTOs;
 using hotel.Models;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using hotel.Services;
+using hotel.DTOs.MessageDTOs.Requests;
 
 namespace hotel.Controllers
 {

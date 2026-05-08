@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using hotel.Data;
-using hotel.DTOs;
 using hotel.Models;
 using BCrypt.Net;
 using System;
@@ -10,6 +9,8 @@ using Microsoft.AspNetCore.Identity;
 using hotel.Jwt;
 using Microsoft.AspNetCore.Authentication;
 using hotel.Services;
+using hotel.DTOs.AuthDTOs.Requests;
+using System.Reflection.Metadata.Ecma335;
 
 namespace hotel.Controllers
 {
@@ -54,7 +55,11 @@ namespace hotel.Controllers
             }
             else
             {
-                return Unauthorized("Invalid username or password.");
+                var errormsg = new LoginUserDTO
+                {
+                    message = "Invalid username or password."
+                };
+                return Unauthorized(errormsg);
             }
         }
     }

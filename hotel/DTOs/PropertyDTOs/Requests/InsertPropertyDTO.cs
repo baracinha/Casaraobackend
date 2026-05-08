@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace hotel.DTOs
+namespace hotel.DTOs.PropertyDTOs.Requests
 {
     public class InsertPropertyDTO
     {
