@@ -75,6 +75,7 @@ namespace hotel.Services
             }
             _context.propriedades_caracteristicas.AddRange(caracteristicas);
             await _context.SaveChangesAsync();
+            await ClearCache($"properties_{propertyDTO.id_utilizador}");
             return propertyDTO;
         }
 
@@ -240,6 +241,11 @@ namespace hotel.Services
                 imagens = p.imagens.Select(i => i.image_url).ToList(),
                 caracteristicas = p.caracteristicas.Select(c => c.caracteristica.nome).ToList()
             }).ToList();
+        }
+
+        public async Task ClearCache(string cacheKey)
+        {
+            await _cache.RemoveAsync(cacheKey);
         }
     }
 }

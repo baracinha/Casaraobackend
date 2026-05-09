@@ -33,6 +33,13 @@ namespace hotel.Controllers
             return Ok(user);
         }
 
+        [HttpPost("GenerateChat")]
+        public async Task<IActionResult> GenerateChat([FromBody] GenerateChatDTO generateChatDTO)
+        {
+            var chatId = await _chatServices.GenerateChat(generateChatDTO);
+            return Ok(new { chatId });
+        }
+
         [HttpGet("BasicList")]
         public async Task<IActionResult> BasicList([FromQuery] BasicListDTO basicListDTO)
         {

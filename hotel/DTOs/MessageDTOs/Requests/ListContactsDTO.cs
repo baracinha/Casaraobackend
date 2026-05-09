@@ -8,6 +8,5 @@ namespace hotel.DTOs.MessageDTOs.Requests
     public class ListContactsDTO
     {
         public int id { get; set; }
-        public string? nome { get; set; }
     }
 }
